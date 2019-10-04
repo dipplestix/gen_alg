@@ -8,24 +8,19 @@ class Chromosone:
         self.fitness = fitness
 
 class Genetic:
-    def __init__(self, gene_set, fitness, display, length):
+    def __init__(self, gene_set, mutate, fitness, display, optimal_fitness, length):
         self.gene_set = gene_set
         self.fitness = fitness
         self.display = display
+        self.mutate = mutate
+        self.optimal_fitness = optimal_fitness
         self.length = length
     
     def get_fitness(self, genes):
         return self.fitness(genes)
         
     def _mutate(self, parent):
-        index = random.randrange(0, len(parent.genes))
-        parent_genes = copy.copy(parent.genes)
-        new_gene = random.choice(self.gene_set)
-        while new_gene == parent_genes[index]:
-            new_gene = random.choice(self.gene_set)
-        parent_genes[index] = new_gene
-        fitness = self.get_fitness(parent_genes)
-        return Chromosone(parent_genes, fitness)
+        return self.mutate(parent, self.gene_set)
         
     def _generate_parent(self):
         genes = [random.choice(self.gene_set) for x in range(self.length)]
@@ -38,8 +33,9 @@ class Genetic:
         if display_on:
             self.display(best, self.start_time)
         fitness = best.fitness
-        while fitness < len(best.genes):
-            candidate = self._mutate(best)
+        while fitness != self.optimal_fitness:
+            candidate_genes = self._mutate(best)
+            candidate = Chromosone(candidate_genes, self.get_fitness(candidate_genes))
             if candidate.fitness > fitness:
                 fitness = candidate.fitness
                 best = candidate

@@ -1,6 +1,8 @@
 import random
 import datetime
 import copy
+import time
+import statistics
 
 class Chromosone:
     def __init__(self, genes, fitness):
@@ -46,4 +48,5 @@ class Genetic:
                 best = candidate
                 if display_on:
                     self.display(best, start_time)
-        return best
+        return best    
+    
